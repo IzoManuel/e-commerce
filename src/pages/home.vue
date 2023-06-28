@@ -166,7 +166,7 @@ function getSrc(path) {
       <section id="live-in-color">
         <cta-section>
           <template #image>
-            <img src="../assets/images/lic-1.jpg" alt="" />
+            <img src="../assets/images/lic-1.jpg" alt="" class="ml-auto"/>
           </template>
           <template #top-text>Play with pattern</template>
           <template #title>CURTAINs AND YARDAGE</template>
@@ -224,7 +224,7 @@ function getSrc(path) {
       <section id="live-in-color">
         <cta-section>
           <template #image>
-            <img src="../assets/images/tray-flower.jpg" alt="" />
+            <img src="../assets/images/tray-flower.jpg" alt="" class="ml-auto"/>
           </template>
           <template #top-text>Explore our new</template>
           <template #title> Printed + Vintage pillows. </template>
@@ -284,7 +284,7 @@ function getSrc(path) {
       <section id="live-in-color">
         <cta-section>
           <template #image>
-            <img src="../assets/images/tray-flower.jpg" alt="" />
+            <img src="../assets/images/tray-flower.jpg" alt="" class="ml-auto"/>
           </template>
           <template #top-text> Indulge in </template>
           <template #title> Beautiful Bedding </template>
