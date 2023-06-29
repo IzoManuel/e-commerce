@@ -1,11 +1,18 @@
 <script setup>
-function getSrc(path) {
-  return new URL(`../assets/svgs/${path}`, import.meta.url).href;
-}
+import { getSrc, currentRouteName } from "../composables/util";
+import { computed } from "vue";
+
+/**COMPUTED PROPERTIES */
+const footerStyle = computed(() => {
+  return {
+    top: ['Register','Login'].includes(currentRouteName()) ? '78vh': '0',
+  };
+});
 </script>
 
 <template>
-  <section id="footer">
+  <section id="footer" class="relative"
+  :style="footerStyle">
     <div id="columns request-columns" class="bg-[#000] mb-[0.75rem]">
       <div
         id="column request-column"
@@ -17,7 +24,7 @@ function getSrc(path) {
         </p>
       </div>
     </div>
-    <div id="site-footer" class="px-[0.5rem] py-[60px]">
+    <div v-if="!['Register','Login'].includes(currentRouteName())" id="site-footer" class="px-[0.5rem] py-[60px]">
       <div
         id="footer-container"
         class="2xl:max-w-[1344px] xl:max-w-[1152px] lg:max-w-[960px] mx-auto"
@@ -120,6 +127,16 @@ function getSrc(path) {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div id="bottom-footer" class="py-[0.25rem]">
+      <div id="privacy-column" class="px-[80px]">
+        <a class="text-[14px] leading-[1.5] tracking-[0.016875rem] pr-1 cursor-pointer hover:underline hover:opacity-70">Privacy Policy</a>
+        <span class="text-[14px] leading-[1.5] pr-1">|</span>
+        <a class="text-[14px] leading-[1.5] tracking-[0.016875rem] pr-1 cursor-pointer hover:underline hover:opacity-70">Terms of use</a>
+        <span class="text-[14px] leading-[1.5] pr-1">|</span>
+        <span class="text-[14px] leading-[1.5] text-[#666]">
+          St. Frank © 2021. All Rights Reserved.</span>
       </div>
     </div>
   </section>

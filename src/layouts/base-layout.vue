@@ -1,14 +1,10 @@
 <script setup>
 import MainHeader from "./main-header.vue";
 import MainFooter from "./main-footer.vue";
-import { ref, onMounted, computed } from "vue";
 
 /**REACTIVE STATES */
 
-
 /**COMPUTED PROPERTIES*/
-
-
 
 /**FUNCTIONS */
 

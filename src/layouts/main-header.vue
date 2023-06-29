@@ -1,10 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
 import ChevronDown from "../assets/svgs/chevron-down.vue";
-import { getSrc } from "../composables/util";
-/**REACTIVE STATE*/
+import { getSrc, currentRouteName } from "../composables/util";
 
-/**COMPUTED PROPERTIES */
+/**REACTIVE STATES */
+
+/**COMPUTED PROPERTIES*/
 
 /** FUNCTIONS */
 
@@ -18,6 +18,7 @@ import { getSrc } from "../composables/util";
           id="top-text"
           class="text-[12px] text-white tracking-[1.35px] leading-[1] uppercase underline"
         >
+          {{ currentRouteName() }}
           SHOP 25% OFF WITH CODE CUSHLIFE
         </p>
       </div>
@@ -78,6 +79,7 @@ import { getSrc } from "../composables/util";
     </div>
     <div id="columns" class="hidden lg:block border-b border-[#eee]">
       <div
+      v-if="!['Register','Login'].includes(currentRouteName())"
         id="column"
         class="flex justify-between items-center max-w-[1120px] mx-auto"
       >

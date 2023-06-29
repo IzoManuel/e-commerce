@@ -1,7 +1,7 @@
 import * as VueRouter from 'vue-router';
 
-const BaseLayout = () => import('../layouts/base-layout.vue');
-const Home = () => import('../pages/home.vue')
+const Register = () => import('../pages/auth/register.vue');
+const Home = () => import('../pages/home.vue');
 
 const router = VueRouter.createRouter({
     history: VueRouter.createWebHashHistory(),
@@ -15,6 +15,11 @@ const router = VueRouter.createRouter({
             path: '/home',
             name: 'Home',
             component: Home,
+        },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register,
         }
     ]
 })
