@@ -1,12 +1,10 @@
 @import url("https://db.onlinewebfonts.com/c/02c5086e8616653dade6e7cb3a1f0498?family=LTCBodoni175W01-Regular");
+@import url('./assets/fonts/Segoe/stylesheet.css');
+@import url('./assets/fonts/GTWalsheim/stylesheet.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "GTWalsheim";
-  src: url("./assets/fonts/GTWalsheim/GTWalsheimPro-Regular.woff");
-}
 @font-face {
   font-family: "LTCBodoni";
   src: url("./assets/fonts/Bodoni/LTC Bodoni 175 W01 Regular/LTC Bodoni 175 W01 Regular.woff");

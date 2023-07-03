@@ -11,7 +11,8 @@ export default {
     extend: {
       fontFamily: {
         'bodoni': ['LTCBodoni', 'sans-serif'],
-        'walsheim': ['GTWalsheim', 'sans-serif']
+        'walsheim': ['GTWalsheim', 'sans-serif'],
+        'segoe':['Segoe UI', 'sans-serif']
       }
     },
   },
