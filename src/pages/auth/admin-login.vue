@@ -7,7 +7,7 @@ import store from "../../store";
 import { useRouter } from 'vue-router';
 /**REACTIVE STATES*/
 const credentials = ref({
-  email: "a@gmail.com",
+  email: "d@gmail.com",
   password: "12345678",
 });
 
@@ -53,13 +53,13 @@ function login() {
           <div
             id="field-error-text"
             class="flex gap-1 mx-auto"
-            v-if="formError.combination"
+            v-if="formError.error_code == 42"
           >
             <div id="error-notice-icon" class="h-[24px] w-[24px]">
               <error-notice></error-notice>
             </div>
             <p class="text-[0.857em] leading-[1.3333] mt-[4px] text-[#ae2a19]">
-              {{ formError.combination }}
+              {{ formError.message }}
             </p>
           </div>
           <div

@@ -2,9 +2,12 @@ import * as VueRouter from "vue-router";
 import store from "../store";
 
 const Register = () => import("../pages/auth/register.vue");
-const AdminLogin = () => import("../pages/admin-auth/login.vue");
+const AdminLogin = () => import("../pages/auth/admin-login.vue");
 const Dashboard = () => import("../pages/dashboard/home.vue");
 const Home = () => import("../pages/home.vue");
+const ProductIndex = () => import("../pages/dashboard/products/index.vue");
+const ListProducts = () => import("../pages/dashboard/products/list.vue");
+const CreateProduct = () => import("../pages/dashboard/products/create.vue");
 
 const router = VueRouter.createRouter({
   history: VueRouter.createWebHashHistory(),
@@ -37,9 +40,30 @@ const router = VueRouter.createRouter({
       path: "/admin",
       name: "Dashboard",
       component: Dashboard,
+      redirect: {path: '/admin/products/list'},
       meta: {
         requiresAuth: true,
       },
+      children: [
+        {
+          path: "products",
+          name: "ProductIndex",
+          component: ProductIndex,
+          redirect: {path: '/admin/products/list'},
+          children: [
+            {
+              path: "list",
+              name: "ListProducts",
+              component: ListProducts,
+            },
+            {
+              path: "create",
+              name: "CreateProduct",
+              component: CreateProduct,
+            },
+          ],
+        },
+      ],
     },
   ],
 });
@@ -73,7 +97,7 @@ router.beforeEach((to, from) => {
         //   console.log(err);
         // });
         //console.log(`FROM: ${from.name}`);
-        return {name: from.name}
+        return { name: from.name };
       }
     }
   }

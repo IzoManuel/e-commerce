@@ -11,7 +11,7 @@ import { getSrc, currentRouteName } from "../composables/util";
 /**HOOK */
 </script>
 <template>
-  <div id="header" class="fixed top-0 left-0 right-0 z-20 bg-[#fff]">
+  <div id="header" class="fixed top-0 left-0 right-0 z-20 bg-[#fff] font-walsheim">
     <div id="top-columns" class="min-w-[12px] bg-[#000]">
       <div id="top-column" class="py-[9px] flex justify-center">
         <p

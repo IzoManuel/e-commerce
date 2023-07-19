@@ -11,7 +11,7 @@ const footerStyle = computed(() => {
 </script>
 
 <template>
-  <section id="footer" class="relative"
+  <section id="footer" class="relative font-walsheim"
   :style="footerStyle">
     <div id="columns request-columns" class="bg-[#000] mb-[0.75rem]">
       <div

@@ -16,7 +16,7 @@ import MainFooter from "./main-footer.vue";
 
   <main-header></main-header>
 
-  <div id="main-content" class="relative lg:mt-[137px] mt-[96.5px]">
+  <div id="main-content" class="relative lg:mt-[137px] mt-[96.5px] font-walsheim">
     <slot name="mainContent"></slot>
   </div>
 
