@@ -5,7 +5,7 @@ import axios from "../../../axios/axios";
 import store from "../../../store";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { getInitials } from '../../../composables/util'
+import { getInitials } from '@/composables/util'
 /**REACTIVE STATES */
 const router = useRouter();
 const loader = ref(false);

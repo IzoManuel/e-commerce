@@ -2,10 +2,32 @@
 import BaseLayout from "../layouts/base-layout.vue";
 import CtaSection from "../layouts/cta-section.vue";
 import ChevronDown from "../assets/svgs/chevron-down.vue";
+import ProductsGrid from "@/components/products-grid.vue";
+import { computed, onMounted } from "vue";
+import store from "@/store";
+/**
+ * COMPUTED
+ */
+ const products = computed(() => store.getters.productItems);
+ const loading = computed(() => store.getters.loading);
+
+/**
+ * FUNCTIONS
+ */
+ function prepareComponent(){
+  store.dispatch('getProductItems');
+}
 
 function getSrc(path) {
   return new URL(`../assets/images/${path}`, import.meta.url).href;
 }
+
+/**
+ * HOOKS
+ */
+onMounted(() => {
+  prepareComponent()
+});
 </script>
 
 <template>
@@ -54,10 +76,9 @@ function getSrc(path) {
                 Use code CUSHLIFE on our printed and handmade pillows!
               </h3>
               <p>
-                <a
+                <router-link :to="{name: 'ProductIndex'}"
                   class="cursor-pointer underline uppercase tracking-[1px] text-[14px]"
-                  >shop now</a
-                >
+                  >shop now</router-link>
               </p>
             </div>
           </div>
@@ -75,98 +96,18 @@ function getSrc(path) {
             >
               Shop these faves
             </h3>
-            <div id="column" class="mx-auto xl:w-[91.66667%] p-[0.75rem]">
-              <div
-                id="product-grid"
-                class="md:flex flex-nowrap last:-mb-[0.75rem]"
-              >
-                <div
-                  id="column"
-                  class="pt-[0.75rem]"
-                  :key="index"
-                  v-for="(item, index) in [
-                    'pillow-1',
-                    'pillow-2',
-                    'pillow-3',
-                    'pillow-4',
-                  ]"
-                >
-                  <div id="product-card" class="p-[1rem]">
-                    <a id="product-image" class="cursor-pointer relative">
-                      <div
-                        id="product-image-container"
-                        class="lg:max-w-[220px] m-auto"
-                      >
-                        <div
-                          id="badge"
-                          class="bg-[#000] rounded-[50px] text-center w-[60px] h-[60px] flex items-center justify-between absolute -right-[15px] -top-[15px] z-10"
-                        >
-                          <p
-                            id="badge-text"
-                            class="text-[#fff] text-[10px] leading-[1.2] tracking-[1px] uppercase"
-                          >
-                            Best seller
-                          </p>
-                        </div>
-                        <div>
-                          <div
-                            id="nacelle-image"
-                            class="max-w-[190px] max-h-[190px] md:max-w-[220px] md:max-h-[220px] mx-auto"
-                          >
-                            <img :src="getSrc(`${item}.jpg`)" alt="" />
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-                    <div
-                      id="product-card-details"
-                      class="flex flex-col pt-[30px] items-center justify-between w-full min-h-[80px]"
-                    >
-                      <a class="cursor-pointer">
-                        <h3
-                          id="product-title"
-                          class="font-bodoni text-[18px] leading-[1.33] tracking-[0.5px] text-center mb-[0.5rem]"
-                        >
-                          Chambray Lattice Baule Pillow
-                        </h3>
-                      </a>
-                      <div id="product-price-range" class="text-center">
-                        <span
-                          id="product-price"
-                          class="text-[12px] leading-[1.83] tracking-[0.5px] mb-[0.5px]"
-                          >$175</span
-                        >
-                        <span>-</span>
-                        <span
-                          id="product-price"
-                          class="text-[12px] leading-[1.83] tracking-[0.5px] mb-[0.5px]"
-                          >$225</span
-                        >
-                      </div>
-                      <h3
-                        id="product-additional-info"
-                        class="text-[12px] leading-[1.83] tracking-[0.5px] text-center opacity-90"
-                      >
-                        Printed
-                      </h3>
-                      <h3
-                        id="product-additional-info"
-                        class="text-[12px] leading-[1.83] tracking-[0.5px] text-center opacity-90"
-                      >
-                        Available in Throw, Lumbar
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ProductsGrid
+              :items="products"
+              :loader="loading"
+              :limit="4"
+            ></ProductsGrid>
           </div>
         </div>
       </section>
       <section id="live-in-color">
         <cta-section>
           <template #image>
-            <img src="../assets/images/lic-1.jpg" alt="" class="ml-auto"/>
+            <img src="../assets/images/lic-1.jpg" alt="" class="ml-auto" />
           </template>
           <template #top-text>Play with pattern</template>
           <template #title>CURTAINs AND YARDAGE</template>
@@ -195,7 +136,8 @@ function getSrc(path) {
             </div>
             <div id="column-right" class="max-w-[1140px]">
               <div id="columns" class="grid grid-cols-3 mb-[12px]">
-                <div
+                <router-link
+                :to="{name: 'ProductIndex'}"
                   id="column"
                   :key="index"
                   class="p-[0.75rem] text-center"
@@ -215,7 +157,7 @@ function getSrc(path) {
                     class="transition text-[18px] tracking-[0.5px] hover:underline hover:opacity-70 cursor-pointer"
                     >New Releases</a
                   >
-                </div>
+                </router-link>
               </div>
             </div>
           </div>
@@ -224,7 +166,11 @@ function getSrc(path) {
       <section id="live-in-color">
         <cta-section>
           <template #image>
-            <img src="../assets/images/tray-flower.jpg" alt="" class="ml-auto"/>
+            <img
+              src="../assets/images/tray-flower.jpg"
+              alt=""
+              class="ml-auto"
+            />
           </template>
           <template #top-text>Explore our new</template>
           <template #title> Printed + Vintage pillows. </template>
@@ -284,7 +230,11 @@ function getSrc(path) {
       <section id="live-in-color">
         <cta-section>
           <template #image>
-            <img src="../assets/images/tray-flower.jpg" alt="" class="ml-auto"/>
+            <img
+              src="../assets/images/tray-flower.jpg"
+              alt=""
+              class="ml-auto"
+            />
           </template>
           <template #top-text> Indulge in </template>
           <template #title> Beautiful Bedding </template>
@@ -396,18 +346,39 @@ function getSrc(path) {
         </div>
       </section>
       <section id="follow-us">
-        <div id="follow-us-content container" class="lg:max-w-[960px] xl:max-w-[1152px] 2xl:max-w-[1344px] mx-auto pt-[4rem] pb-[3rem] md:pb-[4rem]">
+        <div
+          id="follow-us-content container"
+          class="lg:max-w-[960px] xl:max-w-[1152px] 2xl:max-w-[1344px] mx-auto pt-[4rem] pb-[3rem] md:pb-[4rem]"
+        >
           <div id="columns" class="flex flex-col">
             <div id="column text" class="p-[0.75rem] text-center">
               <a id="ig-account">
-                <h1 class="text-[12px] leading-[1] tracking-[2.5px] mb-[1rem] uppercase">@stmanueltextiles</h1>
+                <h1
+                  class="text-[12px] leading-[1] tracking-[2.5px] mb-[1rem] uppercase"
+                >
+                  @stmanueltextiles
+                </h1>
               </a>
-              <h1 id="ig-title" class="mb-[1rem] uppercase text-[30px] nd:leading-[1.33] md:tracking-[2px] md:px-[60px] font-bodoni">Follow our journey</h1>
+              <h1
+                id="ig-title"
+                class="mb-[1rem] uppercase text-[30px] nd:leading-[1.33] md:tracking-[2px] md:px-[60px] font-bodoni"
+              >
+                Follow our journey
+              </h1>
             </div>
             <div id="column ig-images" class="flex">
-              <a class="cursor-pointer" :key="index" v-for="(item, index) in ['ig-1.jpg', 'ig-2.jpg', 'ig-3.jpg', 'ig-4.jpg']">
+              <a
+                class="cursor-pointer"
+                :key="index"
+                v-for="(item, index) in [
+                  'ig-1.jpg',
+                  'ig-2.jpg',
+                  'ig-3.jpg',
+                  'ig-4.jpg',
+                ]"
+              >
                 <div id="ig-image" class="p-[1rem]">
-                  <img :src="getSrc(item)" alt="">
+                  <img :src="getSrc(item)" alt="" />
                 </div>
               </a>
             </div>

@@ -100,7 +100,7 @@ const footerStyle = computed(() => {
               >
                 <img
                   class="mr-[0.5rem] h-[20px] w-[20px]"
-                  :src="getSrc(item.svg)"
+                  :src="getSrc(`svgs/${item.svg}`)"
                 />
                 <a class="cursor-pointer hover:opacity-70 hover:underline">{{ item.title }}</a>
               </div>

@@ -11,6 +11,7 @@ const props = defineProps({
     type: Array,
   },
   list: Boolean,
+  limit: Number,
   loader: Boolean
 });
 

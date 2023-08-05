@@ -25,7 +25,7 @@ import ShoppingBag from "../../../assets/svgs/shopping-bag.vue";
           <div id="section-items">
             <div id="section-item" class="">
               <router-link
-              :to="{name: 'ProductIndex'}"
+              :to="{name: 'DashProductIndex'}"
                 class="relative min-h-[40px] pl-[17px] flex items-center gap-[12px] hover:bg-[#e6effc] active:bg-[#e6effc] active:text-[#0052cc] rounded-[4px] w-full before:absolute before:h-[16px] before:w-[4px] before:left-0 top-[12px] before:rounded-tr-[1.998px] before:rounded-br-[1.998px]"
               >
                 <div id="icon" class="h-[24px] w-[24px]">

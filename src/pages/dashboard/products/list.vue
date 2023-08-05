@@ -39,11 +39,6 @@ onMounted(()=>{
 
 <template>
   <div id="product-list">
-    <div
-      id="bread-crumbs"
-    >
-    <BreadCrumb :entity="'Products'" :entity-route-name="'ProductIndex'" :action="'list'"></BreadCrumb>
-    </div>
     <div class="flex justify-between mb-[16px] items-center">
       <div id="entity-name">
         <h1
@@ -54,7 +49,7 @@ onMounted(()=>{
       </div>
       <div id="add-new">
         <router-link
-        :to="{name: 'CreateProduct'}"
+        :to="{name: 'DashCreateProduct'}"
           class="px-[10px] bg-[#0052cc] text-white h-[37px] flex items-center rounded-[3px] font-medium hover:bg-[#0065ff] text-[14px]"
         >
           New Product

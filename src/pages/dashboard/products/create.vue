@@ -15,6 +15,9 @@ const product = ref({
   description: "Example product description",
   category: 2,
   unit_price: 525,
+  current_stock: 1,
+  discount: 500,
+  min_quantity: 1,
 });
 const loader = ref(false);
 const formError = ref({});
@@ -71,7 +74,7 @@ const sections = ref([
       },
       {
         label: "Minimum Purchase qty",
-        id: "min-quantity",
+        id: "min_quantity",
         type: "number",
       },
       {
@@ -151,8 +154,9 @@ const sectionsRight = ref([
   {
     title: "Shipping configuration",
     fields: [
-      { label: "Free shipping", id: "free_shipping", type: "switch" },
-      { label: "Flat rate", id: "flat_rate", type: "switch" },
+      { label: "Free shipping", id: "shipping_type", type: "switch", negativeCorrelated:'flat_rate' },
+      //{ label: "Flat rate", id: "flat_rate", type: "switch" },
+      { label: "Flat rate shipping cost", id: "flat_shipping_cost", type: "number" },
       {
         label: "Is product quantity multiply",
         id: "is_quantity_multiplied",
@@ -162,7 +166,7 @@ const sectionsRight = ref([
   },
   {
     title: "Low stock quantity Warning",
-    fields: [{ label: "Quantity", id: "low_stock_quantity", type: "number" }],
+    fields: [{ label: "Quantity", id: "current_stock", type: "number" }],
   },
   {
     title: "Stock visibility state",
@@ -233,7 +237,7 @@ function createProduct() {
   });
 
   Object.keys(product.value).forEach(function (key, index) {
-    console.log(`Product: ${key}: ${index}`);
+    console.log(`Product: ${key}: ${product.value[key]}`);
     formData.append(key, product.value[key]);
   });
   axios
@@ -257,7 +261,7 @@ function createProduct() {
 }
 
 function handleFileInputChange(event) {
-  console.log(`FILE CHANGING`)
+  console.log(`FILE CHANGING`);
   // Access the files from the event target
   if (event.target.files) {
     console.log(`Files ${Array.from(event.target.files)}`);
@@ -269,13 +273,6 @@ function handleFileInputChange(event) {
 <template>
   <Popover :responseStatus="createStatusCode == 200"></Popover>
   <div id="create-product">
-    <div id="bread-crumbs">
-      <BreadCrumb
-        :entity="'Products'"
-        :entity-route-name="'ProductIndex'"
-        :action="'create'"
-      ></BreadCrumb>
-    </div>
     <div class="flex justify-between mb-[16px] items-center">
       <div id="entity-name">
         <h1
