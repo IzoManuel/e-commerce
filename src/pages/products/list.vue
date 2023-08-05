@@ -4,6 +4,7 @@ import ChevronDown from "../../assets/svgs/chevron-down.vue";
 import ProductsGrid from "../../components/products-grid.vue";
 import { ref, onMounted, computed } from "vue";
 import store from "@/store";
+import ProductsData from '@/data/products.json'
 import GButton from "@/components/g-button.vue";
 
 /**
