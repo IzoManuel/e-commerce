@@ -5,7 +5,7 @@ let baseURL = import.meta.env.VITE_APP_API_ROOT;
 let useAppJson = import.meta.env.VITE_APP_USE_JSON_DATA;
 if (useAppJson === "true") {
   // Use JSON data in development
-  baseURL = "public/assets";
+  baseURL = "/assets";
 }
 
 let axios = Axios.create({
