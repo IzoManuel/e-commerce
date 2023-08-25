@@ -1,19 +1,21 @@
 <script setup>
-import { ref } from "vue";
-import BreadCrumb from "../../../components/bread-crumb.vue";
-import FormInput from "../../../components/form-input.vue";
-import AppButton from "../../../components/app-button.vue";
-import axios from "../../../axios/axios";
-import Popover from "../../../components/popover.vue";
+import { ref, onMounted, computed } from "vue";
+import FormInput from "@/components/form-input.vue";
+import AppButton from "@/components/app-button.vue";
+import Popover from "@/components/popover.vue";
+import axios from "@/axios/axios";
+import store from "@/store";
+import { useRoute } from "vue-router";
 
 /**
  * REACTIVE STATE
  */
-const productImages = ref([]);
-const product = ref({
-  name: "Example product name",
+const route = useRoute();
+let product = ref({});
+const defaultproduct = ref({
+  name: "Example product name Newa",
   description: "Example product description",
-  category: 2,
+  //categories: 2,
   unit_price: 525,
   current_stock: 1,
   discount: 500,
@@ -24,15 +26,15 @@ const formError = ref({});
 const createStatusCode = ref(false);
 const categoryTest = ref([
   {
-    id: 1,
+    id: 22,
     name: "category1",
   },
   {
-    id: 2,
+    id: 23,
     name: "category2",
   },
   {
-    id: 3,
+    id: 24,
     name: "category3",
   },
 ]);
@@ -43,10 +45,11 @@ const sections = ref([
       { label: "Product Name", id: "name", type: "text", required: true },
       {
         label: "Category",
-        id: "category_id",
+        id: "categories[]",
         renderAs: "select",
         required: true,
         options: categoryTest,
+        multiple: true,
         optionValue: "name",
         optionKey: "id",
       },
@@ -98,7 +101,7 @@ const sections = ref([
     title: "Product images",
     fields: [
       { label: "Gallery images", id: "product_images[]", type: "file" },
-      { label: "Thumbnail image", id: "thumbnail_img", type: "file" },
+      { label: "Thumbnail image", id: "thumbnail_images[]", type: "file" },
     ],
   },
   {
@@ -154,9 +157,18 @@ const sectionsRight = ref([
   {
     title: "Shipping configuration",
     fields: [
-      { label: "Free shipping", id: "shipping_type", type: "switch", negativeCorrelated:'flat_rate' },
+      {
+        label: "Free shipping",
+        id: "shipping_type",
+        type: "switch",
+        negativeCorrelated: "flat_rate",
+      },
       //{ label: "Flat rate", id: "flat_rate", type: "switch" },
-      { label: "Flat rate shipping cost", id: "flat_shipping_cost", type: "number" },
+      {
+        label: "Flat rate shipping cost",
+        id: "flat_shipping_cost",
+        type: "number",
+      },
       {
         label: "Is product quantity multiply",
         id: "is_quantity_multiplied",
@@ -221,53 +233,112 @@ const sectionsRight = ref([
     fields: [{ label: "Tax", id: "tax", type: "number" }],
   },
 ]);
+
+const isNew = route.name === "ProductCreate";
+
+/**
+ * COMPUTED
+ */
+const productItem = computed(() =>
+  store.getters.productItemById(route.params.id)
+);
 /**
  * FUNCTIONS
  *
  * */
-function createProduct() {
+async function createProduct() {
   loader.value = true;
   const formData = new FormData();
 
-  for (let i = 0; i < productImages.value.length; i++) {
-    formData.append("product_images[]", productImages);
-  }
-  productImages.value.forEach((file) => {
-    formData.append("product_images[]", file);
+  Object.entries(product.value).forEach(([key, value]) => {
+    if(['categories[]'].includes(key)){
+      console.log(`CAT: ${value}`);
+    }
+    if (["product_images[]", "thumbnail_images[]"].includes(key)) {
+      value.forEach((file) => {
+        formData.append(key, file);
+      });
+    } else {
+      formData.append(key, value);
+    }
   });
 
-  Object.keys(product.value).forEach(function (key, index) {
-    console.log(`Product: ${key}: ${product.value[key]}`);
-    formData.append(key, product.value[key]);
-  });
-  axios
-    .post("/admin/products", formData)
-    .then((response) => {
-      product.value = response.data.product;
-      formError.value = {};
-      createStatusCode.value = response.status;
-    })
-    .catch((err) => {
-      if (err.response) {
-        formError.value = err.response.data.errors;
-      }
-    })
-    .finally(() => {
-      loader.value = false;
-      setTimeout(() => {
-        createStatusCode.value = false;
-      }, 3000);
-    });
-}
-
-function handleFileInputChange(event) {
-  console.log(`FILE CHANGING`);
-  // Access the files from the event target
-  if (event.target.files) {
-    console.log(`Files ${Array.from(event.target.files)}`);
-    productImages.value = Array.from(event.target.files);
+  try {
+    const response = await axios.post("/admin/products", formData);
+    product.value = response.data.data;
+    formError.value = {};
+    createStatusCode.value = response.status;
+    store.dispatch('addProduct', response.data.data)
+  } catch (error) {
+    if (error.response) {
+      formError.value = error.response.data.errors;
+    }
+  } finally {
+    loader.value = false;
+    setTimeout(() => {
+      createStatusCode.value = false;
+    }, 3000);
   }
 }
+
+async function updateProduct() {
+  loader.value = true;
+  const formData = new FormData();
+  Object.entries(product.value).forEach(([key, value]) => {
+    if (["product_images[]", "thumbnail_images[]"].includes(key)) {
+      value.forEach((file) => {
+        formData.append(key, file);
+      });
+    }else if(["categories[]"].includes(key)) {
+      value.forEach((item) => {
+        formData.append(key, item);
+      });
+    } else {
+      formData.append(key, value);
+    }
+  });
+
+  try {
+    const response = await axios.post(
+      `/admin/products/${product.value.id}`,
+      formData
+    );
+    product.value = response.data.data;
+    store.dispatch('updateProductItem', response.data.data)
+    formError.value = {};
+    createStatusCode.value = response.status;
+  } catch (error) {
+    if (error.response) {
+      formError.value = error.response.data.errors;
+    }
+  } finally {
+    loader.value = false;
+    setTimeout(() => {
+      createStatusCode.value = false;
+    }, 3000);
+  }
+}
+
+function onSubmit() {
+  if (isNew) {
+    createProduct();
+  } else {
+    updateProduct();
+  }
+}
+
+function prepareComponent() {
+  if (!isNew) {
+    //store.dispatch("getProductItems");
+    product.value = { ...productItem.value };
+  } else {
+    product.value = defaultproduct.value;
+  }
+}
+
+onMounted(() => {
+  prepareComponent();
+});
 </script>
 
 <template>
@@ -278,11 +349,11 @@ function handleFileInputChange(event) {
         <h1
           class="text-[1.71429em] leading-[1.16667] text-[#17284d] tracking-[0.01em] font-medium"
         >
-          Create Product
+          {{ isNew ? 'Create': 'Update'}} Product
         </h1>
       </div>
     </div>
-    <div id="form">
+    <form id="form" @submit.prevent="onSubmit">
       <div id="grid" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div id="col-left" class="col-span-2">
           <div
@@ -305,8 +376,6 @@ function handleFileInputChange(event) {
               <FormInput
                 :key="index"
                 v-for="(field, index) in section.fields"
-                ref=""
-                @change="handleFileInputChange"
                 :label="field.label"
                 :type="field.type"
                 :id="field.id"
@@ -315,6 +384,7 @@ function handleFileInputChange(event) {
                 :render-as="field.renderAs"
                 :required="field.required"
                 :options="field.renderAs === 'select' ? field.options : []"
+                :multiple = field.multiple
                 :option-value="field.optionValue"
                 :option-key="field.optionKey"
                 :place-holder="field.placeholder"
@@ -362,12 +432,8 @@ function handleFileInputChange(event) {
         </div>
       </div>
       <div id="submit" class="mt-[20px]">
-        <AppButton
-          :label="'Save'"
-          :action="createProduct"
-          :loader="loader"
-        ></AppButton>
+        <AppButton :label="'Save'" :loader="loader"></AppButton>
       </div>
-    </div>
+    </form>
   </div>
 </template>

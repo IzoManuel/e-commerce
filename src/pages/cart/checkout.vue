@@ -61,8 +61,8 @@ const sections = ref([
  * COMPUTED
  */
 const cartItems = computed(() => store.getters.cartItems);
-const totalPriceForCartItem = computed(() => (cartItemId) =>
-  store.getters.totalPriceForCartItem(cartItemId)
+const totalPriceForCartItem = computed(
+  () => (cartItemId) => store.getters.totalPriceForCartItem(cartItemId)
 );
 const totalCartPrice = computed(() => store.getters.totalCartPrice);
 </script>
@@ -81,7 +81,9 @@ const totalCartPrice = computed(() => store.getters.totalCartPrice);
           class="border-r border-[#d3d3d3] lg:w-[54%] h-[100vh] pt-[4em] pr-[4em]"
         >
           <div class="site-logo">
-            <h1 class="text-[2em] text-[#333333]">St. Manuel</h1>
+            <router-link :to="{ name: 'ProductIndex' }">
+              <h1 class="text-[2em] text-[#333333]">St. Manuel</h1>
+            </router-link>
           </div>
           <div id="form" class="mt-[30px] text-[#333333]">
             <div v-for="(section, index) in sections" :key="index">
@@ -108,9 +110,7 @@ const totalCartPrice = computed(() => store.getters.totalCartPrice);
             </div>
 
             <div id="cta" class="flex justify-end">
-              <AppButton
-                :label="'Continue to shipping'"
-              ></AppButton>
+              <AppButton :label="'Continue to shipping'"></AppButton>
             </div>
           </div>
         </div>
@@ -138,7 +138,9 @@ const totalCartPrice = computed(() => store.getters.totalCartPrice);
                           >{{ cartItem.quantity }}</span
                         >
                       </div>
-                      <img :src="getSrc(`images/${cartItem.thumbnail_img}.jpg`)" />
+                      <img
+                        :src="getSrc(`images/${cartItem.thumbnail_img}.jpg`)"
+                      />
                     </div>
                     <div id="Product-description">
                       <h1 class="font-medium text-[#323232] text-[14px]">
@@ -147,7 +149,9 @@ const totalCartPrice = computed(() => store.getters.totalCartPrice);
                     </div>
                   </div>
                   <div id="product-total">
-                    <h1 class="font-medium text-[#323232] text-[14px]">${{ totalPriceForCartItem(cartItem.id) }}</h1>
+                    <h1 class="font-medium text-[#323232] text-[14px]">
+                      ${{ totalPriceForCartItem(cartItem.id) }}
+                    </h1>
                   </div>
                 </div>
               </div>

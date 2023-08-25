@@ -1,23 +1,71 @@
 <script setup>
 import { getSrc } from "../composables/util";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import Spinner from "../components/Spinner.vue";
+import { useRouter } from "vue-router";
+import AppButton from "./app-button.vue";
 
+/**
+ * PROPS
+ */
 const props = defineProps({
   headers: {
     type: Array,
   },
   items: {
     type: Array,
+    default: []
   },
   list: Boolean,
   limit: Number,
-  loader: Boolean
+  loader: Boolean,
+  actions: Array,
+  rowRoute: String
 });
-
+/**
+ * REACTIVE STATE
+ */
+const router = useRouter();
+const confirmStatus = ref(Array(props.items.length).fill(false));
+const deleteLoaders = ref(Array(props.items.length).fill(false));
+/**
+ * COMPUTED
+ */
 const hasItems = computed(() => {
   return props.items && props.items.length;
 });
+
+/**
+ * FUNCTIONS
+ */
+function editItem({ id, slug }) {
+  router.push({ name: props.rowRoute, params: { slug: slug, id: id } });
+}
+
+async function deleteItem(item, itemIndex, action) {
+  if (confirmStatus.value[itemIndex]) {
+    deleteLoaders.value[itemIndex] = true
+    try {
+      await action.actionFunction(item.id);
+      confirmStatus.value[itemIndex] = false;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      deleteLoaders.value[itemIndex] = false;
+    }
+  } else {
+    confirmStatus.value[itemIndex] = true;
+    setTimeout(() => {
+      confirmStatus.value[itemIndex] = false; // Reset state after timeout
+    }, 3000);
+  }
+}
+
+const handleClick = (item, itemIndex, action) => {
+  if(action.actionLabel == 'Delete'){
+    deleteItem(item, itemIndex, action);
+  }
+};
 </script>
 <template>
   <div>
@@ -60,18 +108,22 @@ const hasItems = computed(() => {
             >
               {{ header.value }}
             </th>
+            <th class="py-[7px] px-[10px]">ACTIONS</th>
           </tr>
         </thead>
         <tbody v-if="hasItems" class="bg-white">
           <tr
-            class="text-[#172b4d] border-b text-[14px]"
-            v-for="(item, index) in items"
-            :key="index"
+            v-for="(item, itemIndex) in items"
+            :key="itemIndex"
+            @click="editItem({ slug: item?.slug, id: item.id })"
+            :class="{
+              'cursor-not-allowed pointer-events-none opacity-50':
+                deleteLoaders[itemIndex],
+            }"
+            class="text-[#172b4d] border-b text-[14px] hover:bg-[#fafafa] cursor-pointer"
           >
-          <td
-              class="py-[7px] px-[10px]"
-            >
-              {{ index+1 }}
+            <td class="py-[7px] px-[10px]">
+              {{ itemIndex + 1 }}
             </td>
             <td
               class="py-[7px] px-[10px]"
@@ -79,6 +131,32 @@ const hasItems = computed(() => {
               :key="index"
             >
               {{ item[header.key] }}
+            </td>
+            <td
+              :class="{ 'text-[#ae2a19]': confirmStatus[itemIndex] }"
+              class="text-[#0052cc] transition py-[7px] px-[10px] cursor flex gap-2"
+            >
+              <div
+                :key="index"
+                v-for="(action, index) in actions"
+                class="flex relative hover:underline"
+              >
+                <div
+                  v-if="deleteLoaders[itemIndex]"
+                  id="spinner"
+                  class="w-[20px] h-[20px] mx-auto absolute left-0"
+                >
+                  <spinner class=""></spinner>
+                </div>
+                <span
+                  :class="{ invisible: deleteLoaders[itemIndex] }"
+                  @click.stop="handleClick(item, itemIndex, action)"
+                >
+                  {{
+                    !confirmStatus[itemIndex] ? action.actionLabel : "Confirm"
+                  }}
+                </span>
+              </div>
             </td>
           </tr>
         </tbody>

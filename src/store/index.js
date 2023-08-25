@@ -6,20 +6,26 @@ import state from "./state";
 import { default as mutations } from "./mutations";
 import * as actions from "./actions";
 import product from "./modules/product";
+import category from "./modules/category";
+import customer from "./modules/customer";
 import cart from "./modules/cart";
-import auth from "./modules/auth"
+import order from "./modules/order";
+//import auth from "./modules/auth"
+import localStoragePlugin from './localStoragePlugin'
 
 const store = createStore({
   modules: {
+    //order,
     product,
     cart,
+    category,
+    customer,
     // auth
   },
-  state,
   getters,
   mutations,
   actions,
-  plugins: [createPersistedState()],
+  plugins: [localStoragePlugin],
 });
 
 export default store;

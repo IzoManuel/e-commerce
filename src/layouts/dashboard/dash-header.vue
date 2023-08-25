@@ -1,8 +1,8 @@
 <script setup>
-import NotificationBell from "../../../assets/svgs/notification-bell.vue";
-import DropDown from "../../../components/drop-down.vue";
-import axios from "../../../axios/axios";
-import store from "../../../store";
+import NotificationBell from "@/assets/svgs/notification-bell.vue";
+import DropDown from "@/components/drop-down.vue";
+import axios from "@/axios/axios";
+import store from "@/store";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { getInitials } from '@/composables/util'

@@ -6,9 +6,22 @@ const Register = () => import("../pages/auth/register.vue");
 const AdminLogin = () => import("../pages/auth/admin-login.vue");
 const Dashboard = () => import("../pages/dashboard/home.vue");
 const Home = () => import("../pages/home.vue");
+
 const DashProductIndex = () => import("../pages/dashboard/products/index.vue");
 const DashListProducts = () => import("../pages/dashboard/products/list.vue");
-const DashCreateProduct = () => import("../pages/dashboard/products/create.vue");
+const DashProductForm = () => import("@/pages/dashboard/products/ProductForm.vue");
+
+const DashCategoryIndex = () => import("@/pages/dashboard/category/CategoryIndex.vue");
+const DashCategoryList = () => import('@/pages/dashboard/category/CategoryList.vue');
+const DashCategoryForm = () => import("@/pages/dashboard/category/CategoryForm.vue");
+
+const DashCustomerIndex = () => import("@/pages/dashboard/customer/CustomerIndex.vue");
+const DashCustomerList = () => import('@/pages/dashboard/customer/CustomerList.vue');
+const DashCustomerForm = () => import("@/pages/dashboard/customer/CustomerForm.vue");
+
+const DashOrderIndex = () => import("@/pages/dashboard/order/OrderIndex.vue");
+const DashOrderList = () => import('@/pages/dashboard/order/OrderList.vue');
+const DashOrderForm = () => import("@/pages/dashboard/order/OrderForm.vue");
 
 const ProductIndex = () => import("../pages/products/index.vue");
 const ListProducts = () => import("../pages/products/list.vue");
@@ -87,8 +100,82 @@ const routes = [
           },
           {
             path: "create",
-            name: "DashCreateProduct",
-            component: DashCreateProduct,
+            name: "ProductCreate",
+            component: DashProductForm,
+          },
+          {
+            path: ":id/:slug",
+            name: "ProductUpdate",
+            component: DashProductForm,
+          },
+        ],
+      },
+      {
+        path: "categories",
+        name: "DashCategoryIndex",
+        component: DashCategoryIndex,
+        redirect: {path: '/admin/categories/list'},
+        children: [
+          {
+            path: "list",
+            name: "DashCategoryList",
+            component: DashCategoryList,
+          },
+          {
+            path: "create",
+            name: "CategoryCreate",
+            component: DashCategoryForm,
+          },
+          {
+            path: ":id/:slug",
+            name: "CategoryUpdate",
+            component: DashCategoryForm,
+          },
+        ],
+      },
+      {
+        path: "customers",
+        name: "DashCustomerIndex",
+        component: DashCustomerIndex,
+        redirect: {path: '/admin/customers/list'},
+        children: [
+          {
+            path: "list",
+            name: "DashCustomerList",
+            component: DashCustomerList,
+          },
+          {
+            path: "create",
+            name: "CustomerCreate",
+            component: DashCustomerForm,
+          },
+          {
+            path: ":id/:slug?",
+            name: "CustomerUpdate",
+            component: DashCustomerForm,
+          },
+        ],
+      },
+      {
+        path: "orders",
+        name: "DashOrderIndex",
+        component: DashOrderIndex,
+        redirect: {path: '/admin/orders/list'},
+        children: [
+          {
+            path: "list",
+            name: "DashOrderList",
+            component: DashOrderList,
+          },
+          {
+            path: "create",
+            name: "OrderCreate",
+            component: DashOrderForm,
+          },
+          {
+            path: ":id/:slug?",
+            name: "OrderUpdate",
+            component: DashOrderForm,
           },
         ],
       },

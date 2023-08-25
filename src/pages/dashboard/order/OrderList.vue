@@ -1,45 +1,41 @@
 <script setup>
-import DataTable from "@/components/data-table.vue";
-// import axios from "../../../axios/axios";
-import { useRouter } from "vue-router";
 import { ref, onMounted, computed } from "vue";
+import DataTable from "@/components/data-table.vue";
 import store from "@/store";
+
 /**
  * REACTIVE STATES
  */
-const products = computed(() => store.getters.productItems);
-const loading = computed(() => store.getters.loading);
-const router = useRouter();
-
-const productTableHeaders = ref([
+const orderTableHeaders = ref([
   { value: "NAME", key: "name" },
-  { value: "UNIT PRICE", key: "unit_price" },
+  { value: "Email", key: "email" },
+]);
+const actions = ref([
+  {
+    actionFunction: (orderId) => deleteOrder(orderId),
+    actionLabel: "Delete",
+  },
+  //{actionFunction: ({id, slug}) => editItem({id, slug}), actionLabel: 'Edit'}
 ]);
 
-const actions = ref([
-  {actionFunction: (productId) => deleteProduct(productId), actionLabel: 'Delete'},
-  //{actionFunction: ({id, slug}) => editItem({id, slug}), actionLabel: 'Edit'}
-])
+//const orders = computed(() => store.getters.orders);
+//console.log(`ORDERS: ${store.getters.orders}`)
+const orders = [];
 /**
  * FUNCTIONS
  */
 function prepareComponent() {
- store.dispatch("getProductItems");
+  //store.dispatch("getOrders");
 }
 
-function editItem({ id, slug }) {
-  router.push({ name: "ProductUpdate", params: { slug: slug, id: id } });
-}
-
-async function deleteProduct(productId) {
-  try{
-    await store.dispatch('deleteProductItem', productId);
-  }catch(error){
+async function deleteOrder(orderId) {
+  try {
+    await store.dispatch("deleteOrder", orderId);
+  } catch (error) {
     console.error(error);
   }
-  store.dispatch("getProductItems");
+  store.dispatch("getOrders");
 }
-
 /**
  * HOOKS
  */
@@ -47,35 +43,33 @@ onMounted(() => {
   prepareComponent();
 });
 </script>
-
 <template>
-  <div id="product-list">
+  <div id="order-list">
     <div class="flex justify-between mb-[16px] items-center">
       <div id="entity-name">
         <h1
           class="text-[1.71429em] leading-[1.16667] text-[#17284d] tracking-[0.01em] font-medium"
         >
-          Products
+          Orders
         </h1>
       </div>
       <div id="add-new">
         <router-link
-          :to="{ name: 'ProductCreate'}"
+          :to="{ name: 'OrderCreate' }"
           class="px-[10px] bg-[#0052cc] text-white h-[37px] flex items-center rounded-[3px] font-medium hover:bg-[#0065ff] text-[14px]"
         >
-          New Product
+          New Order
         </router-link>
       </div>
     </div>
     <div id="data-table">
       <DataTable
-        :headers="productTableHeaders"
-        :items="products"
-        :loader="loading"
+        :headers="orderTableHeaders"
+        :items="orders"
         :actions="actions"
-        :rowRoute="`ProductUpdate`"
+        :rowRoute="`OrderUpdate`"
       >
-    </DataTable>
+      </DataTable>
     </div>
   </div>
 </template>

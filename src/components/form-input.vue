@@ -25,7 +25,7 @@ const props = defineProps({
     default: "",
   },
   modelValue: {
-    type: [String, Number, Array, Boolean],
+    type: [String, Number, Array, Boolean, FileList],
     default: "",
   },
   type: {
@@ -49,22 +49,47 @@ const props = defineProps({
     default: false,
   },
   negativeCorrelated: {
-    type:String
-  }
+    type: String,
+  },
+  multiple: Boolean
 });
 
+/**
+ * COMPUTED
+ */
 const isValid = computed(() => {
   return !props.formError;
 });
 
+const selectedOptions = ref(props.modelValue || []);
+
 const emit = defineEmits(["update:modelValue"]);
 
-function input(e) {
+/**
+ * FUNCTIONS
+ */
+function handleInput(e) {
   emit("update:modelValue", e.target.value);
 }
+
+function handleInputSelect() {
+  emit("update:modelValue", selectedOptions.value);
+}
+
 function switchInput(e) {
   emit("update:modelValue", e);
 }
+
+const handleFileInput = (event) => {
+  if (event.target.files) {
+    emit("update:modelValue", Array.from(event.target.files));
+  }
+};
+
+const removeTag = (option) => {
+  selectedOptions.value = selectedOptions.value.filter((selected) => selected !== option);
+  handleInputSelect();
+};
 </script>
 
 <template>
@@ -82,10 +107,10 @@ function switchInput(e) {
         'border-[#de350b] border-2': formError,
         'border-[#dfe1e6]': !formError,
       }"
-      class="transition w-full border focus:border-[#4c9aff] focus:border-2 focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+      class="focus:outline-offset-0  focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-[#4c9aff] focus:border-1 hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
       :placeholder="placeholder"
       :value="modelValue"
-      @input="input"
+      @input="handleInput"
     />
 
     <!--File input field -->
@@ -99,29 +124,30 @@ function switchInput(e) {
         'border-[#de350b]': formError,
         'border-[#dfe1e6]': !formError,
       }"
-      class="transition w-full border focus:border-2 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+      class="focus:outline-offset-0  focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-1 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
       :placeholder="placeholder"
-      :value="modelValue"
-      @input="input"
+      @change="handleFileInput"
     />
     <!-- Textarea field -->
     <textarea
       v-if="renderAs === 'textarea'"
       :name="id"
       :id="id"
-      class="transition w-full border focus:border-2 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+      class="focus:outline-offset-0 focus:outline-2 focus:outline-[#4c9aff]transition w-full border focus:border-1 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
       :placeholder="placeholder"
       :value="modelValue"
-      @input="input"
+      @input="handleInput"
     />
 
     <!-- Select field -->
+    <div v-if="renderAs === 'select'">
     <select
-      v-if="renderAs === 'select'"
+      
       :id="id"
-      :value="modelValue"
-      class="transition w-full border focus:border-2 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
-      @input="input"
+      v-model="selectedOptions"
+      :multiple="multiple"
+      class="focus:outline-offset-0 focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-1 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+      @input="handleInputSelect"
     >
       <option value="">Select option</option>
       <option
@@ -132,6 +158,13 @@ function switchInput(e) {
         {{ option[optionValue] }}
       </option>
     </select>
+    <div class="tags">
+      <span v-for="selectedOption in selectedOptions" :key="selectedOption" class="tag">
+        {{ selectedOption }}
+        <button @click="removeTag(selectedOption)">X</button>
+      </span>
+    </div>
+  </div>
 
     <!-- Switch -->
     <Switch
