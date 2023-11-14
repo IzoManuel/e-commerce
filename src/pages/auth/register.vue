@@ -31,7 +31,7 @@ import BaseLayout from "../../layouts/base-layout.vue";
                 >
                   <label
                     for="FirstName"
-                    class="uppercase text-[12px] leading-[1] tracking-[1.5px] mb-[5px] group-focus:text-red-500"
+                    class="uppercase text-[12px] leading-[1] tracking-[1.5px] mb-[5px] opacity-0 group-focus:text-red-500 group-focus:opacity-100 transition-opacity duration-300"
                     >First Name</label
                   >
                   <input

@@ -6,11 +6,14 @@ import { getSrc } from "@/composables/util";
 import store from "@/store";
 import axios from "@/axios/axios";
 import ErrorNotice from "@/assets/svgs/error-notice.vue";
+import Modal from "@/components/modal.vue";
+let useAppJson = import.meta.env.VITE_APP_USE_JSON_DATA;
 
 const loader = ref(false);
 const checkout = ref({});
 const formError = ref({});
 const checkoutError = ref({});
+const isModalOpen = ref(false);
 const cart = store.getters["cart/cartItems"];
 const paymentOptions = ref([
   { label: "Mpesa", value: "mpesa" },
@@ -192,6 +195,22 @@ async function handlePayment() {
   console.log(`PM-ID:${stripePaymentMethod.value}`)
 }
 
+function setIsOpen(value) {
+  isModalOpen.value = value;
+}
+
+function openModal() {
+  isModalOpen.value = true;
+}
+
+function onSubmit () {
+  if (useAppJson) {
+    openModal();
+  } else {
+    createOrder();
+  }
+}
+
 const configureStripe = () => {
   stripe = Stripe(stripeAPIToken);
   elements = stripe.elements();
@@ -204,6 +223,19 @@ onMounted(() => {
 });
 </script>
 <template>
+    <Modal
+    :isOpen="isModalOpen"
+    :modalTitle="``"
+    :setIsOpen="setIsOpen"
+  >
+    <template #modalBody>
+      <div
+        class="mt-[12px]"
+      >
+      <p>Oops! 🙊 It seems our payment magic is still in the making. We're hard at work getting it ready for you. Thanks for your patience!</p>
+      </div>
+    </template>
+  </Modal>
   <div id="checkout">
     <div
       id="checkout-content"
@@ -222,7 +254,7 @@ onMounted(() => {
             </router-link>
           </div>
           <form
-            @submit.prevent="createOrder"
+            @submit.prevent="onSubmit"
             id="form"
             class="mt-[30px] text-[#333333]"
           >
@@ -263,11 +295,11 @@ onMounted(() => {
               <div id="card-element" class="mb-4"></div>
             </div>
             <!-- STRIPE -->
-            <div id="cta" class="flex justify-end">
+            <div id="cta" class="flex justify-end pb-10">
               <AppButton
                 :label="'Place order'"
                 :loader="loader"
-                @click="createOrder"
+                @click="onSubmit"
               ></AppButton>
             </div>
           </form>

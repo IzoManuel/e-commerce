@@ -12,6 +12,7 @@ let axios = Axios.create({
   baseURL: baseURL,
 });
 
+
 axios.interceptors.request.use(
   function (config) {
     if (useAppJson === "true" && !config.url.endsWith(".json")) {
