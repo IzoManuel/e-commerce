@@ -8,9 +8,9 @@ const state = {
 const mutations = {
   ADD_CART_ITEM(state, {cartItem, increment = 1}) {
     const existingProduct = state.cartItems.find((item) => item.id === cartItem.id);
-    if (existingProduct && increment < 12 && existingProduct.quantity <= cartItem.current_stock) {
+    if (existingProduct && increment < 12) {
       existingProduct.quantity += increment;
-    }else if(cartItem.current_stock > 0){
+    }else{
       cartItem.quantity = 1
       state.cartItems.push(cartItem);
     }
@@ -18,7 +18,7 @@ const mutations = {
   },
   INCREMENT_QUANTITY(state, {cartItemId, increment = 1}) {
     const cartItem = state.cartItems.find(item => item.id == cartItemId);
-    if(cartItem && cartItem.quantity < 13 && cartItem.quantity <= cartItem.current_stock) {
+    if(cartItem && cartItem.quantity < 13) {
       cartItem.quantity += increment
     }
   }, 
@@ -71,7 +71,7 @@ const getters = {
   showSlideover: (state) => state.showSlideover
 };
 
-const cart = {
+const adminCart = {
   namespaced: true,
   state,
   mutations,
@@ -79,4 +79,4 @@ const cart = {
   getters,
 };
 
-export default cart;
+export default adminCart;

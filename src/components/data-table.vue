@@ -4,6 +4,7 @@ import { computed, ref } from "vue";
 import Spinner from "../components/Spinner.vue";
 import { useRouter } from "vue-router";
 import AppButton from "./app-button.vue";
+import FormInput from "@/components/form-input.vue";
 
 /**
  * PROPS
@@ -14,27 +15,34 @@ const props = defineProps({
   },
   items: {
     type: Array,
-    default: []
+    default: [],
   },
   list: Boolean,
   limit: Number,
   loader: Boolean,
   actions: Array,
-  rowRoute: String
+  rowRoute: String,
+  search: String,
+  fetchItems: Function,
+  currentPage: Number,
+  totalPages: Number,
 });
 /**
  * REACTIVE STATE
  */
+const searchQuery = ref("");
 const router = useRouter();
 const confirmStatus = ref(Array(props.items.length).fill(false));
 const deleteLoaders = ref(Array(props.items.length).fill(false));
+
+const emit = defineEmits(["changePage"]);
 /**
  * COMPUTED
  */
 const hasItems = computed(() => {
   return props.items && props.items.length;
 });
-
+const hasNextPage = computed(() => props.currentPage < props.totalPages);
 /**
  * FUNCTIONS
  */
@@ -44,7 +52,7 @@ function editItem({ id, slug }) {
 
 async function deleteItem(item, itemIndex, action) {
   if (confirmStatus.value[itemIndex]) {
-    deleteLoaders.value[itemIndex] = true
+    deleteLoaders.value[itemIndex] = true;
     try {
       await action.actionFunction(item.id);
       confirmStatus.value[itemIndex] = false;
@@ -62,13 +70,20 @@ async function deleteItem(item, itemIndex, action) {
 }
 
 const handleClick = (item, itemIndex, action) => {
-  if(action.actionLabel == 'Delete'){
+  if (action.actionLabel == "Delete") {
     deleteItem(item, itemIndex, action);
+  }
+};
+
+const changePage = (newPage) => {
+  if (newPage >= 1 && newPage <= props.totalPages) {
+    props.fetchItems(null, newPage);
+    emit("changePage", newPage);
   }
 };
 </script>
 <template>
-  <div>
+  <div class="mb-[20px]">
     <div id="search-input">
       <div
         id="field-group"
@@ -83,6 +98,8 @@ const handleClick = (item, itemIndex, action) => {
         <input
           type="text"
           id="search"
+          v-model="searchQuery"
+          @input="fetchItems(searchQuery)"
           class="w-full transition border-2 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[6px] px-[6px] pr-[30px] font-[14px] rounded-[3.01px] focus:bg-white block"
         />
         <div
@@ -93,14 +110,14 @@ const handleClick = (item, itemIndex, action) => {
         </div>
       </div>
     </div>
-    <div class="border rounded-[6px] bg-[#F4F5F7] pb-[42px] pt-[5px]">
+    <div class="border rounded-[6px] bg-[#F4F5F7] pt-[5px]">
       <table class="w-full text-left">
         <thead
           v-if="hasItems"
           class="text-[#44546f] text-[12px] font-semibold leading-[1.6666] border-b"
         >
           <tr>
-            <th class="py-[7px] px-[10px]">#</th>
+            <th class="py-[7px] px-[10px]"><input @click.stop type="checkbox"></th>
             <th
               class="py-[7px] px-[10px]"
               v-for="(header, index) in headers"
@@ -123,7 +140,7 @@ const handleClick = (item, itemIndex, action) => {
             class="text-[#172b4d] border-b text-[14px] hover:bg-[#fafafa] cursor-pointer"
           >
             <td class="py-[7px] px-[10px]">
-              {{ itemIndex + 1 }}
+              <input type="checkbox">
             </td>
             <td
               class="py-[7px] px-[10px]"
@@ -167,6 +184,23 @@ const handleClick = (item, itemIndex, action) => {
           <p v-else class="mx-auto">Oops! no Data</p>
         </div>
       </table>
+      <div id="table-footer" class="bg-[#F4F5F7] h-[42px] py-[7px] px-[10px]">
+        <div id="text" class="flex justify-between text-[14px]">
+          <div id="of"></div>
+          <div id="pagination-controls" class="flex gap-2">
+            <button
+              @click="changePage(currentPage - 1)"
+              :disabled="currentPage === 1"
+              class="border-[2px] px-2 rounded-sm"
+              
+            >
+              Previous
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button @click="changePage(currentPage + 1)" :disabled="!hasNextPage" class="border-[2px] px-2 rounded-sm">Next</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

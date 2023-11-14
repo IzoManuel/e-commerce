@@ -31,7 +31,7 @@ const createStatusCode = ref(false);
  * COMPUTED
  */
 const categoryItem = computed(() =>
-  store.getters.categoryById(route.params.id)
+  store.getters['category/itemById'](route.params.id)
 );
 
 /**
@@ -85,7 +85,7 @@ async function updateCategory() {
   });
 
   try {
-    const response = await axios.post(`/admin/categories/${route.params.id}`, formData);
+    const response = await axios.put(`/admin/categories/${route.params.id}`, formData);
     category.value = response.data.data;
     formError.value = {};
     createStatusCode.value = response.status;
@@ -177,7 +177,7 @@ onMounted(() => {
         </div>
       </div>
       <div id="submit" class="mt-[20px]">
-        <AppButton :label="'Save'" :loader="loader"></AppButton>
+        <AppButton :label="'Save'" :loader="loader" @click="onSubmit"></AppButton>
       </div>
     </form>
   </div>

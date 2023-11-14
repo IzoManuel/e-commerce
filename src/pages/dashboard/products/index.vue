@@ -13,7 +13,6 @@ const breadcrumbItems = [
 </script>
 <template>
   <div id="bread-crumbs">
-    <!-- <BreadCrumb2></BreadCrumb2> -->
     <BreadCrumb
       :entity="'Products'"
       :entity-route-name="'DashProductIndex'"

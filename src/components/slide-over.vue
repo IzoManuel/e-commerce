@@ -27,7 +27,7 @@ const props = defineProps({
 });
 
 const toggleSlideover = () => {
-  store.dispatch('toggleSlideover')
+  store.dispatch('cart/toggleSlideover')
 };
 </script>
 

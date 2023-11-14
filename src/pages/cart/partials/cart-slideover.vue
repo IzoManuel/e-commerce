@@ -9,41 +9,41 @@ const router = useRouter();
 /**
  * COMPUTED
  */
-const totalQuantity = computed(() => store.getters.totalQuantity);
-const showSlideover = computed(() => store.getters.showSlideover);
-const cartItems = computed(() => store.getters.cartItems);
+const totalQuantity = computed(() => store.getters['cart/totalQuantity']);
+const showSlideover = computed(() => store.getters['cart/showSlideover']);
+const cartItems = computed(() => store.getters['cart/cartItems']);
 
 /**
  * COMPUTED
  */
-const totalCartPrice = computed(() => store.getters.totalCartPrice);
+const totalCartPrice = computed(() => store.getters['cart/totalCartPrice']);
 const totalPriceForCartItem = computed(
-  () => (cartItemId) => store.getters.totalPriceForCartItem(cartItemId)
+  () => (cartItemId) => store.getters['cart/totalPriceForCartItem'](cartItemId)
 );
 
 /**
  * FUNCTIONS
  */
 const decrementCartItemQuantity = (itemId) => {
-  store.dispatch("decrementCartItemQuantity", itemId);
+  store.dispatch("cart/decrementCartItemQuantity", itemId);
 };
 
 const incrementCartItemQuantity = (itemId) => {
-  store.dispatch("incrementCartItemQuantity", itemId);
+  store.dispatch("cart/incrementCartItemQuantity", itemId);
 };
 
 const removeCartItem = (itemId) => {
-  store.dispatch("removeCartItem", itemId);
+  store.dispatch("cart/removeCartItem", itemId);
 };
 
 function toCart() {
   router.push({ name: "Cart" });
-  store.dispatch("toggleSlideover");
+  store.dispatch("cart/toggleSlideover");
 }
 
 function toCheckout() {
   router.push({ name: "Checkout" });
-  store.dispatch("toggleSlideover");
+  store.dispatch("cart/toggleSlideover");
 }
 </script>
 <template>

@@ -1,7 +1,8 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import ErrorNotice from "../assets/svgs/error-notice.vue";
 import { Switch } from "@headlessui/vue";
+import Multiselect from "vue-multiselect";
 
 const enabled = ref(false);
 
@@ -9,6 +10,7 @@ const props = defineProps({
   label: {
     type: String,
     required: true,
+    default: "text",
   },
   id: {
     type: String,
@@ -26,7 +28,7 @@ const props = defineProps({
   },
   modelValue: {
     type: [String, Number, Array, Boolean, FileList],
-    default: "",
+    //default: "",
   },
   type: {
     type: String,
@@ -40,9 +42,11 @@ const props = defineProps({
   },
   optionValue: {
     type: String,
+    default: "name",
   },
   optionKey: {
     type: String,
+    default: "id",
   },
   required: {
     type: Boolean,
@@ -51,8 +55,22 @@ const props = defineProps({
   negativeCorrelated: {
     type: String,
   },
-  multiple: Boolean
+  multiple: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const selectedOptions = ref([]);
+const emit = defineEmits(["update:modelValue", "select"]);
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    selectedOptions.value = newValue || [];
+    
+  }
+);
 
 /**
  * COMPUTED
@@ -61,10 +79,25 @@ const isValid = computed(() => {
   return !props.formError;
 });
 
-const selectedOptions = ref(props.modelValue || []);
+const tagNames = computed(() => {
+  return props.options
+    .map((option) => {
+      if (props.multiple) {
+        if (selectedOptions.value.includes(option[props.optionKey])) {
+          return option;
+        }
+      } else {
+        if (option[props.optionKey] == selectedOptions.value) {
+          return option;
+        }
+      }
+    })
+    .filter((item) => item != null);
+});
 
-const emit = defineEmits(["update:modelValue"]);
-
+const getFieldError = computed(() => {
+  return props.formError[props.id] || null// props.formError[props.id] ? formError[props.id] : null
+});
 /**
  * FUNCTIONS
  */
@@ -72,8 +105,16 @@ function handleInput(e) {
   emit("update:modelValue", e.target.value);
 }
 
-function handleInputSelect() {
+function handleInputSelect(value) {
+  if (props.multiple) {
+    if (!selectedOptions.value.includes(value[props.optionKey])) {
+      selectedOptions.value.push(value[props.optionKey]);
+    }
+  } else {
+    selectedOptions.value = value[props.optionKey];
+  }
   emit("update:modelValue", selectedOptions.value);
+  emit("select", selectedOptions.value);
 }
 
 function switchInput(e) {
@@ -87,9 +128,21 @@ const handleFileInput = (event) => {
 };
 
 const removeTag = (option) => {
-  selectedOptions.value = selectedOptions.value.filter((selected) => selected !== option);
-  handleInputSelect();
+  if (props.multiple) {
+    selectedOptions.value = selectedOptions.value.filter(
+      (selected) => selected !== option
+    );
+  } else {
+    selectedOptions.value = [];
+  }
+
+  emit("update:modelValue", selectedOptions.value);
 };
+
+/**
+ * HOOKS
+ */
+onMounted(() => {});
 </script>
 
 <template>
@@ -104,10 +157,10 @@ const removeTag = (option) => {
       :name="id"
       :id="id"
       :class="{
-        'border-[#de350b] border-2': formError,
-        'border-[#dfe1e6]': !formError,
+        'border-[#de350b] border-2': getFieldError,
+        'border-[#dfe1e6]': !getFieldError,
       }"
-      class="focus:outline-offset-0  focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-[#4c9aff] focus:border-1 hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+      class="focus:outline-offset-0 focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-[#4c9aff] focus:border-1 hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
       :placeholder="placeholder"
       :value="modelValue"
       @input="handleInput"
@@ -121,10 +174,10 @@ const removeTag = (option) => {
       :multiple="type === 'file'"
       :id="id"
       :class="{
-        'border-[#de350b]': formError,
-        'border-[#dfe1e6]': !formError,
+        'border-[#de350b]': getFieldError,
+        'border-[#dfe1e6]': !getFieldError,
       }"
-      class="focus:outline-offset-0  focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-1 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+      class="focus:outline-offset-0 focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-1 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
       :placeholder="placeholder"
       @change="handleFileInput"
     />
@@ -141,30 +194,53 @@ const removeTag = (option) => {
 
     <!-- Select field -->
     <div v-if="renderAs === 'select'">
-    <select
-      
-      :id="id"
-      v-model="selectedOptions"
-      :multiple="multiple"
-      class="focus:outline-offset-0 focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-1 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
-      @input="handleInputSelect"
-    >
-      <option value="">Select option</option>
-      <option
-        :value="option[optionKey]"
-        :key="index"
-        v-for="(option, index) in options"
-      >
-        {{ option[optionValue] }}
-      </option>
-    </select>
-    <div class="tags">
-      <span v-for="selectedOption in selectedOptions" :key="selectedOption" class="tag">
-        {{ selectedOption }}
-        <button @click="removeTag(selectedOption)">X</button>
-      </span>
+      <div class="tags flex flex-wrap gap-2 mb-2">
+        <span
+          class="bg bg-[#42526e]/10 rounded-[3px] px-[8px]"
+          v-for="(tagName, index) in tagNames"
+        >
+          {{ tagName[optionValue] }}
+          <button
+            type="button"
+            @click="removeTag(tagName[optionKey])"
+            class="text-xs text-black font-bold ml-2"
+          >
+            X
+          </button>
+        </span>
+      </div>
+      <multiselect
+        class="cursor-pointer focus:outline-offset-0 focus:outline-2 focus:outline-[#4c9aff] transition w-full border focus:border-1 focus:border-[#4c9aff] focus:outline-none hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+        :value="selectedOptions"
+        :options="options"
+        placeholder="Select one"
+        label="name"
+        :multiple="multiple"
+        track-by="id"
+        @select="handleInputSelect"
+        :close-on-select="!multiple"
+        :show-labels="false"
+      ></multiselect>
     </div>
-  </div>
+
+    <!-- radio field -->
+    <div v-for="(option, index) in options" class="mb-3 mt-2 cursor-pointer flex gap-3 items-center">
+      <input
+        v-if="['radio'].includes(type)"
+        :type="type"
+        :name="id"
+        :id="`${id}-${index}`"
+        :class="{
+          'border-[#de350b] border-2': getFieldError,
+          'border-[#dfe1e6]': !getFieldError,
+        }"
+        class="focus:outline-offset-0 focus:outline-2 focus:outline-[#4c9aff] transition border focus:border-[#4c9aff] focus:border-1 hover:bg-[#ebecf0] py-[3px] px-[4px] rounded-[3.01px] focus:bg-white block"
+        :placeholder="placeholder"
+        :value="option.value"
+        @change="handleInput"
+      />
+      <label :for="`${id}-${index}`" class="cursor-pointer ">{{option.label}}</label>
+    </div>
 
     <!-- Switch -->
     <Switch
@@ -182,12 +258,12 @@ const removeTag = (option) => {
       />
     </Switch>
 
-    <div id="field-error-text" class="flex gap-1" v-if="formError">
+    <div id="field-error-text" class="flex gap-1" v-if="getFieldError">
       <div id="error-notice-icon" class="h-[24px] w-[24px]">
         <error-notice></error-notice>
       </div>
       <p class="text-[0.857em] leading-[1.3333] mt-[4px] text-[#ae2a19]">
-        {{ formError[0] }}
+        {{ getFieldError[0] }}
       </p>
     </div>
   </div>

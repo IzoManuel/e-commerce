@@ -1,23 +1,24 @@
 <script setup>
-import Spinner from './Spinner.vue'
+import Spinner from "./Spinner.vue";
 
 const props = defineProps({
-    label:{
-        type: String,
-        required: true,
-        default: 'Save'
-    },
-    loader: {
-        type:Boolean,
-        default: false
-    },
-    action: {
-        type: Function
-    }
-})
+  label: {
+    type: String,
+    required: true,
+    default: "Save",
+  },
+  loader: {
+    type: Boolean,
+    default: false,
+  },
+  action: {
+    type: Function,
+  },
+});
 </script>
 <template>
   <button
+    type="button"
     :disabled="loader"
     :class="{ 'cursor-not-allowed': loader }"
     id="login"

@@ -7,8 +7,9 @@ import store from "@/store";
  * REACTIVE STATES
  */
 const orderTableHeaders = ref([
-  { value: "NAME", key: "name" },
-  { value: "Email", key: "email" },
+  //{ value: "Email", key: "shipping_address" },
+  { value: "Payment status", key: "payment_status" },
+  { value: "Delivery status", key: "delivery_status" },
 ]);
 const actions = ref([
   {
@@ -18,23 +19,28 @@ const actions = ref([
   //{actionFunction: ({id, slug}) => editItem({id, slug}), actionLabel: 'Edit'}
 ]);
 
-//const orders = computed(() => store.getters.orders);
-//console.log(`ORDERS: ${store.getters.orders}`)
-const orders = [];
+const orders = computed(() => store.getters['order/items']);
+//console.log(`ORDERS: ${store.getters.orders}`);
+//const orders = [];
 /**
  * FUNCTIONS
  */
+function fetchOrders (searchQuery) {
+  store.dispatch("order/getItems", {endpoint: 'admin/orders', searchQuery});
+}
+
 function prepareComponent() {
-  //store.dispatch("getOrders");
+  fetchOrders();
 }
 
 async function deleteOrder(orderId) {
   try {
     await store.dispatch("deleteOrder", orderId);
   } catch (error) {
+
     console.error(error);
   }
-  store.dispatch("getOrders");
+  fetchOrders();
 }
 /**
  * HOOKS
@@ -68,6 +74,7 @@ onMounted(() => {
         :items="orders"
         :actions="actions"
         :rowRoute="`OrderUpdate`"
+        :fetchItems="fetchOrders"
       >
       </DataTable>
     </div>

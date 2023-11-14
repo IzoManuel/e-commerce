@@ -10,7 +10,7 @@
     </nav> -->
     <div class="breadcrumb">
     <span v-for="(crumb, index) in breadcrumbs" :key="index">
-      <span v-if="index !== breadcrumbs.length - 1"> / </span>
+      <span v-if="index !== breadcrumbs.length - 1 && index !== 0"> / </span>
       <router-link :to="crumb.to">{{ crumb.label }}</router-link>
     </span>
   </div>
@@ -29,17 +29,6 @@
   
   const route = useRoute();
   console.log(`PATH: ${route.path}`)
-  // const breadcrumbs = computed(() => {
-  //   const basePath = route.path.split('/').slice(1);
-  //   return [
-  //     //{ label: 'Home', link: '/' },
-  //     ...basePath.map((segment, index) => ({
-  //       label: segment,
-  //       link: basePath.slice(0, index + 1).join('/'),
-  //     })),
-  //     //...props.items,
-  //   ];
-  // });
   const breadcrumbs = computed(() => {
   const segments = route.path.split('/').filter(segment => segment !== '');
   let path = '';

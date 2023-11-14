@@ -18,13 +18,16 @@ const actions = ref([
   //{actionFunction: ({id, slug}) => editItem({id, slug}), actionLabel: 'Edit'}
 ]);
 
-const customers = computed(() => store.getters.customers);
-console.log(`CUSTOMERS: ${store.getters.customers}`)
+const customers = computed(() => store.getters['customer/items']);
 /**
  * FUNCTIONS
  */
+function fetchCustomers (searchQuery) {
+  store.dispatch("customer/getItems", {endpoint: 'admin/customers', searchQuery});
+}
+
 function prepareComponent() {
-  store.dispatch("getCustomers");
+  fetchCustomers();
 }
 
 async function deleteCustomer(customerId) {
@@ -33,7 +36,7 @@ async function deleteCustomer(customerId) {
   } catch (error) {
     console.error(error);
   }
-  store.dispatch("getCustomers");
+  fetchCustomers();
 }
 /**
  * HOOKS
@@ -67,6 +70,7 @@ onMounted(() => {
         :items="customers"
         :actions="actions"
         :rowRoute="`CustomerUpdate`"
+        :fetchItems="fetchCustomers"
       >
       </DataTable>
     </div>

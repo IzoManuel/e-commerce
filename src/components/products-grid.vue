@@ -3,8 +3,9 @@ import { getSrc } from "../composables/util";
 import { computed, nextTick } from "vue";
 import Spinner from "../components/Spinner.vue";
 import GButton from "./g-button.vue";
-import store from '@/store';
+import store from "@/store";
 import CartSlideover from "@/pages/cart/partials/cart-slideover.vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   items: {
@@ -17,6 +18,7 @@ const props = defineProps({
   list: Boolean,
   loader: Boolean,
 });
+const router = useRouter();
 
 const hasItems = computed(() => {
   return props.items && props.items.length;
@@ -31,16 +33,20 @@ const limitedItems = computed(() => {
 });
 
 const addItemToCart = (item) => {
-  nextTick(() => {
-    store.dispatch('addCartItem', item);
-  });
+  //nextTick(() => {
+  store.dispatch("cart/addCartItem", item);
+  // });
 };
 
 function handleCartButtonClick(item) {
-  addItemToCart({cartItem: item});
-  store.dispatch('toggleSlideover')
-}
+  if (item.current_stock > 0) {
+    addItemToCart({ cartItem: item });
+    store.dispatch("cart/toggleSlideover");
+  }else{
+    router.push({name: 'ViewProduct', params: {id: item.slug}})
+  }
 
+}
 </script>
 <template>
   <div id="column" class="mx-auto xl:w-[91.66667%] p-[0.75rem]">
@@ -95,11 +101,14 @@ function handleCartButtonClick(item) {
                   {{ item.name }}
                 </h3>
               </a>
-              <div id="product-price-range" class="text-center flex items-center gap-1">
+              <div
+                id="product-price-range"
+                class="text-center flex items-center gap-1"
+              >
                 <span
                   id="product-price"
                   class="text-[12px] leading-[1.83] tracking-[0.5px] mb-[0.5px]"
-                  >${{ item.unit_price -200 }}</span
+                  >${{ item.unit_price - 200 }}</span
                 >
                 <span>-</span>
                 <span
@@ -123,8 +132,12 @@ function handleCartButtonClick(item) {
             </div>
           </div>
         </router-link>
-        <div id="add-to-cart" class="flex ">
-          <GButton :label="'Add to cart'" class="mx-auto bg-[#d3d3d3]/30" @click="handleCartButtonClick(item)"></GButton>
+        <div id="add-to-cart" class="flex">
+          <GButton
+            :label="item.current_stock > 0 ? 'Add to cart' : 'Read More'"
+            class="mx-auto bg-[#d3d3d3]/30"
+            @click="handleCartButtonClick(item)"
+          ></GButton>
         </div>
       </div>
     </div>
@@ -134,6 +147,6 @@ function handleCartButtonClick(item) {
       </div>
       <p v-else class="mx-auto">Oops! no Data</p>
     </div>
-    <CartSlideover/>
+    <CartSlideover />
   </div>
 </template>

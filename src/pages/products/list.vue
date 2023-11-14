@@ -15,18 +15,23 @@ const loadingMore = ref(false);
 /**
  * COMPUTED
  */
-const products = computed(() => store.getters.productItems);
+const products = computed(() => store.getters['product/items']);
 const loading = computed(() => store.getters.loading);
 const nextPageExists = computed(() => store.getters.nextPageExists);
 
 /**
  * FUNCTIONS
  */
-function prepareComponent() {
-  store.dispatch("getProductItems");
+
+ function fetchProducts (searchQuery) {
+  store.dispatch('product/getItems', {endpoint:'products', searchQuery})
 }
 
-const loadMore = () => store.dispatch("loadMore");
+function prepareComponent() {
+  fetchProducts();
+}
+
+const loadMore = () => store.dispatch("product/loadMore");
 
 /**
  * HOOKS

@@ -40,7 +40,7 @@ const createStatusCode = ref(false);
  * COMPUTED
  */
 const customerItem = computed(() =>
-  store.getters.customerById(route.params.id)
+  store.getters['customer/itemById'](route.params.id)
 );
 
 /**

@@ -8,26 +8,26 @@ import store from "@/store";
 /**
  * COMPUTED
  */
-const cartItems = computed(() => store.getters.cartItems);
-const totalQuantity = computed(() => store.getters.totalQuantity);
+const cartItems = computed(() => store.getters['cart/cartItems']);
+const totalQuantity = computed(() => store.getters['cart/totalQuantity']);
 const totalPriceForCartItem = computed(() => (cartItemId) =>
-  store.getters.totalPriceForCartItem(cartItemId)
+  store.getters['cart/totalPriceForCartItem'](cartItemId)
 );
-const totalCartPrice = computed(() => store.getters.totalCartPrice);
+const totalCartPrice = computed(() => store.getters['cart/totalCartPrice']);
 
 /**
  * FUNCTIONS
  */
 const decrementCartItemQuantity = (itemId) => {
-  store.dispatch('decrementCartItemQuantity', itemId)
+  store.dispatch('cart/decrementCartItemQuantity', itemId)
 };
 
 const incrementCartItemQuantity = (itemId) => {
-  store.dispatch('incrementCartItemQuantity', itemId)
+  store.dispatch('cart/incrementCartItemQuantity', itemId)
 }
 
 const removeCartItem = (itemId) => {
-  store.dispatch('removeCartItem', itemId)
+  store.dispatch('cart/removeCartItem', itemId)
 }
 </script>
 

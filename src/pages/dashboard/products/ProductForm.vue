@@ -6,7 +6,7 @@ import Popover from "@/components/popover.vue";
 import axios from "@/axios/axios";
 import store from "@/store";
 import { useRoute } from "vue-router";
-
+import "vue3-carousel/dist/carousel.css";
 /**
  * REACTIVE STATE
  */
@@ -15,29 +15,30 @@ let product = ref({});
 const defaultproduct = ref({
   name: "Example product name Newa",
   description: "Example product description",
-  //categories: 2,
+  categories: [22, 23],
   unit_price: 525,
-  current_stock: 1,
+  current_stock: 50,
   discount: 500,
   min_quantity: 1,
 });
 const loader = ref(false);
 const formError = ref({});
 const createStatusCode = ref(false);
-const categoryTest = ref([
-  {
-    id: 22,
-    name: "category1",
-  },
-  {
-    id: 23,
-    name: "category2",
-  },
-  {
-    id: 24,
-    name: "category3",
-  },
-]);
+// const categoryTest = ref([
+//   {
+//     id: 22,
+//     name: "category1",
+//   },
+//   {
+//     id: 23,
+//     name: "category2",
+//   },
+//   {
+//     id: 24,
+//     name: "category3",
+//   },
+// ]);
+const categories = computed(() => store.getters["category/items"]);
 const sections = ref([
   {
     title: "Product information",
@@ -45,10 +46,10 @@ const sections = ref([
       { label: "Product Name", id: "name", type: "text", required: true },
       {
         label: "Category",
-        id: "categories[]",
+        id: "categories",
         renderAs: "select",
         required: true,
-        options: categoryTest,
+        options: categories,
         multiple: true,
         optionValue: "name",
         optionKey: "id",
@@ -100,8 +101,8 @@ const sections = ref([
   {
     title: "Product images",
     fields: [
-      { label: "Gallery images", id: "product_images[]", type: "file" },
-      { label: "Thumbnail image", id: "thumbnail_images[]", type: "file" },
+      { label: "Gallery images", id: "product_images", type: "file" },
+      { label: "Thumbnail image", id: "thumbnail_images", type: "file" },
     ],
   },
   {
@@ -240,8 +241,9 @@ const isNew = route.name === "ProductCreate";
  * COMPUTED
  */
 const productItem = computed(() =>
-  store.getters.productItemById(route.params.id)
+  store.getters["product/itemById"](route.params.id)
 );
+
 /**
  * FUNCTIONS
  *
@@ -251,12 +253,9 @@ async function createProduct() {
   const formData = new FormData();
 
   Object.entries(product.value).forEach(([key, value]) => {
-    if(['categories[]'].includes(key)){
-      console.log(`CAT: ${value}`);
-    }
-    if (["product_images[]", "thumbnail_images[]"].includes(key)) {
-      value.forEach((file) => {
-        formData.append(key, file);
+    if (["product_images", "thumbnail_images", "categories"].includes(key)) {
+      value.forEach((item) => {
+        formData.append(key + "[]", item);
       });
     } else {
       formData.append(key, value);
@@ -265,10 +264,10 @@ async function createProduct() {
 
   try {
     const response = await axios.post("/admin/products", formData);
-    product.value = response.data.data;
+    //product.value = response.data.data;
     formError.value = {};
     createStatusCode.value = response.status;
-    store.dispatch('addProduct', response.data.data)
+    store.dispatch("addProduct", response.data.data);
   } catch (error) {
     if (error.response) {
       formError.value = error.response.data.errors;
@@ -285,13 +284,9 @@ async function updateProduct() {
   loader.value = true;
   const formData = new FormData();
   Object.entries(product.value).forEach(([key, value]) => {
-    if (["product_images[]", "thumbnail_images[]"].includes(key)) {
-      value.forEach((file) => {
-        formData.append(key, file);
-      });
-    }else if(["categories[]"].includes(key)) {
+    if (["product_images", "thumbnail_images", "categories"].includes(key)) {
       value.forEach((item) => {
-        formData.append(key, item);
+        formData.append(key + "[]", item);
       });
     } else {
       formData.append(key, value);
@@ -304,7 +299,7 @@ async function updateProduct() {
       formData
     );
     product.value = response.data.data;
-    store.dispatch('updateProductItem', response.data.data)
+    //store.dispatch("updateProductItem", response.data.data);
     formError.value = {};
     createStatusCode.value = response.status;
   } catch (error) {
@@ -331,9 +326,13 @@ function prepareComponent() {
   if (!isNew) {
     //store.dispatch("getProductItems");
     product.value = { ...productItem.value };
+    product.value.categories = product.value.categories.map(
+      (category) => category.id
+    );
   } else {
     product.value = defaultproduct.value;
   }
+  store.dispatch("category/getItems", { endpoint: "categories" });
 }
 
 onMounted(() => {
@@ -349,7 +348,7 @@ onMounted(() => {
         <h1
           class="text-[1.71429em] leading-[1.16667] text-[#17284d] tracking-[0.01em] font-medium"
         >
-          {{ isNew ? 'Create': 'Update'}} Product
+          {{ isNew ? "Create" : "Update" }} Product
         </h1>
       </div>
     </div>
@@ -384,7 +383,7 @@ onMounted(() => {
                 :render-as="field.renderAs"
                 :required="field.required"
                 :options="field.renderAs === 'select' ? field.options : []"
-                :multiple = field.multiple
+                :multiple="field.multiple"
                 :option-value="field.optionValue"
                 :option-key="field.optionKey"
                 :place-holder="field.placeholder"
@@ -432,7 +431,11 @@ onMounted(() => {
         </div>
       </div>
       <div id="submit" class="mt-[20px]">
-        <AppButton :label="'Save'" :loader="loader"></AppButton>
+        <AppButton
+          :label="'Save'"
+          :loader="loader"
+          @click="onSubmit"
+        ></AppButton>
       </div>
     </form>
   </div>

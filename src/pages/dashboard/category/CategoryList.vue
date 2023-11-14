@@ -17,23 +17,32 @@ const actions = ref([
   },
   //{actionFunction: ({id, slug}) => editItem({id, slug}), actionLabel: 'Edit'}
 ]);
-
-const categories = computed(() => store.getters.categories);
+/**
+ * COMPUTED
+ */
+const categories = computed(() => store.getters["category/items"]);
 
 /**
  * FUNCTIONS
  */
+function fetchCategories(searchQuery) {
+  store.dispatch("category/getItems", { endpoint: "categories", searchQuery });
+}
+
 function prepareComponent() {
-  store.dispatch("getCategories");
+  fetchCategories();
 }
 
 async function deleteCategory(categoryId) {
   try {
-    await store.dispatch("deleteCategory", categoryId);
+    await store.dispatch("category/deleteItem", {
+      endpoint: "admin/categories",
+      itemId: categoryId,
+    });
   } catch (error) {
     console.error(error);
   }
-  store.dispatch("getCategories");
+  fetchCategories();
 }
 /**
  * HOOKS
@@ -67,6 +76,7 @@ onMounted(() => {
         :items="categories"
         :actions="actions"
         :rowRoute="`CategoryUpdate`"
+        :fetchItems="fetchCategories"
       >
       </DataTable>
     </div>

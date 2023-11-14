@@ -104,7 +104,7 @@ const routes = [
             component: DashProductForm,
           },
           {
-            path: ":id/:slug",
+            path: ":id/:slug?",
             name: "ProductUpdate",
             component: DashProductForm,
           },
@@ -127,7 +127,7 @@ const routes = [
             component: DashCategoryForm,
           },
           {
-            path: ":id/:slug",
+            path: ":id/:slug?",
             name: "CategoryUpdate",
             component: DashCategoryForm,
           },
