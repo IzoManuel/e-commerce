@@ -86,23 +86,27 @@ const mainNavItems = [
           <div id="main-nav-right">
             <div id="main-nav-menu" class="flex items-center">
               <a
-                :key="index"
-                v-for="(navItem, index) in ['search', 'sign in']"
                 class="hidden lg:block tracking-[1.25px] cursor-pointer first:pl-0 p-[0.75rem] text-[11px] font-[500] transition hover:text-black/70"
-                >{{ navItem }}</a
+                >search</a
               >
-
+              <router-link
+                :to="{ name: 'Login' }"
+                class="hidden lg:block tracking-[1.25px] cursor-pointer first:pl-0 p-[0.75rem] text-[11px] font-[500] transition hover:text-black/70"
+                >Sign in</router-link
+              >
               <a
-                :key="index"
-                v-for="(navItem, index) in ['images/search.png']"
-                class="tracking-[1.25px] cursor-pointer first:pl-0 p-[0.75rem] text-[11px] font-[500] transition hover:text-black/70"
-                ><img class="w-[20px] h-[20px]" :src="getSrc(navItem)" alt=""
+                class="lg:hidden tracking-[1.25px] cursor-pointer first:pl-0 p-[0.75rem] text-[11px] font-[500] transition hover:text-black/70"
+                ><img
+                  class="w-[20px] h-[20px]"
+                  :src="getSrc('images/search.png')"
+                  alt=""
               /></a>
               <a
-                :key="index"
-                v-for="(navItem, index) in ['images/heart.png']"
                 class="lg:hidden tracking-[1.25px] cursor-pointer first:pl-0 p-[0.75rem] text-[11px] font-[500] transition hover:text-black/70"
-                ><img class="w-[20px] h-[20px]" :src="getSrc(navItem)" alt=""
+                ><img
+                  class="w-[20px] h-[20px]"
+                  :src="getSrc(`images/heart.png`)"
+                  alt=""
               /></a>
               <router-link
                 :to="{ name: 'Cart' }"
@@ -125,7 +129,11 @@ const mainNavItems = [
       >
         <DropDown :key="index" v-for="(item, index) in mainNavItems">
           <template #menuButton>
-            <router-link :to="{ name: 'ProductIndex' }" id="nav-{}" class="cursor-pointer">
+            <router-link
+              :to="{ name: 'ProductIndex' }"
+              id="nav-{}"
+              class="cursor-pointer"
+            >
               <div id="dropdown-trigger">
                 <a
                   class="flex items-center uppercase py-[0.75rem] text-[11px] tracking-[1px] transition hover:text-black/70 border-b border-transparent hover:border-[#1a1919]"

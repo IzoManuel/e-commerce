@@ -3,19 +3,24 @@ import BaseLayout from "../layouts/base-layout.vue";
 import CtaSection from "../layouts/cta-section.vue";
 import ChevronDown from "../assets/svgs/chevron-down.vue";
 import ProductsGrid from "@/components/products-grid.vue";
-import { computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import store from "@/store";
 /**
  * COMPUTED
  */
- const products = computed(() => store.getters.productItems);
+ const products = computed(() => store.getters["product/items"]);
  const loading = computed(() => store.getters.loading);
+ const search = ref("");
 
 /**
  * FUNCTIONS
  */
+ function fetchProducts(searchQuery, page) {
+  store.dispatch("product/getItems", { endpoint: "products", searchQuery, page });
+}
+
  function prepareComponent(){
-  store.dispatch('getProductItems');
+  fetchProducts();
 }
 
 function getSrc(path) {
