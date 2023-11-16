@@ -20,33 +20,99 @@ import BaseLayout from "../../layouts/base-layout.vue";
             >
               Create account
             </h1>
-            <div id="form">
-              <div
-                id="accounts_register-grid"
-                class="flex flex-col lg:flex-row"
-              >
+            <form id="form">
+    
+                <div id="name" class="md:flex gap-8">
+                  <div
+                    id="form-group"
+                    class="w-full mb-[30px] lg:w-[256px] group flex flex-col"
+                  >
+                    <label
+                      for="firstName"
+                      class="uppercase text-[12px] leading-[1] tracking-[1.5px] mb-[5px] opacit-0 group-focus:text-red-500 group-focus:opacity-100 transition-opacity duration-300"
+                      >First Name</label
+                    >
+                    <input
+                      class="h-[50px] border placeholder-black border-black px-[15px] text-[12px] leading-[50px] tracking-[1px] text-black rounded-none focus:placeholder-transparent"
+                      type="text"
+                      name=""
+                      id="firstName"
+                      placeholder=""
+                      required
+                      autofocus
+                    />
+                  </div>
+                  <div
+                    id="form-group"
+                    class="w-full mb-[30px] lg:w-[256px] group flex flex-col"
+                  >
+                    <label
+                      for="lastName"
+                      class="uppercase text-[12px] leading-[1] tracking-[1.5px] mb-[5px] opacit-0 group-focus:text-red-500 group-focus:opacity-100 transition-opacity duration-300"
+                      >Last Name</label
+                    >
+                    <input
+                      class="h-[50px] border placeholder-black border-black px-[15px] text-[12px] leading-[50px] tracking-[1px] text-black rounded-none focus:placeholder-transparent"
+                      type="text"
+                      name=""
+                      id="lastName"
+                      placeholder=""
+                      required
+                      autofocus
+                    />
+                  </div>
+                </div>
                 <div
                   id="form-group"
-                  class="w-full mb-[30px] lg:w-[256px] group flex flex-col"
+                  class="w-full mb-[30px] group flex flex-col"
                 >
                   <label
-                    for="FirstName"
-                    class="uppercase text-[12px] leading-[1] tracking-[1.5px] mb-[5px] opacity-0 group-focus:text-red-500 group-focus:opacity-100 transition-opacity duration-300"
-                    >First Name</label
+                    for="email"
+                    class="uppercase text-[12px] leading-[1] tracking-[1.5px] mb-[5px] opacit-0 group-focus:text-red-500 group-focus:opacity-100 transition-opacity duration-300"
+                    >Email</label
                   >
                   <input
                     class="h-[50px] border placeholder-black border-black px-[15px] text-[12px] leading-[50px] tracking-[1px] text-black rounded-none focus:placeholder-transparent"
                     type="text"
                     name=""
-                    id="FirstName"
-                    placeholder="FIRST NAME"
+                    id="email"
+                    placeholder=""
                     required
                     autofocus
                   />
                 </div>
-                <div id="form-group"></div>
-              </div>
-            </div>
+                <div
+                  id="form-group"
+                  class="w-full mb-[30px] group flex flex-col"
+                >
+                  <label
+                    for="password"
+                    class="uppercase text-[12px] leading-[1] tracking-[1.5px] mb-[5px] opacit-0 group-focus:text-red-500 group-focus:opacity-100 transition-opacity duration-300"
+                    >Password</label
+                  >
+                  <input
+                    class="h-[50px] border placeholder-black border-black px-[15px] text-[12px] leading-[50px] tracking-[1px] text-black rounded-none focus:placeholder-transparent"
+                    type="password"
+                    name=""
+                    id="password"
+                    placeholder=""
+                    required
+                    autofocus
+                  />
+                </div>
+
+                <div id="button-group">
+                  <button
+                    id="cta"
+                    class="transition bg-[#000] py-[17px] px-[40px] border border-[#000] hover:text-[#000] hover:bg-[#fff] text-[12px] leading-[1] tracking-[1.5px] uppercase text-[#fff] mb-[2rem]"
+                  >
+                    Create Account
+                  </button>
+                </div>
+                <div id="text-group" class="">
+                  <router-link :to="{ name: 'Login' }" id="sign-in" class="underline cursor-pointer transition hover:text-black/70">Already have an account? Sign in</router-link>
+                </div>
+            </form>
           </div>
         </div>
       </div>

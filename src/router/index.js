@@ -3,6 +3,7 @@ import store from "../store";
 
 
 const Register = () => import("../pages/auth/register.vue");
+const Login = () => import("../pages/auth/login.vue");
 const AdminLogin = () => import("../pages/auth/admin-login.vue");
 const Dashboard = () => import("../pages/dashboard/home.vue");
 const Home = () => import("../pages/home.vue");
@@ -69,6 +70,17 @@ const routes = [
     path: "/register",
     name: "Register",
     component: Register,
+    meta: {
+      strictNoAuth: true,
+    },
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    meta: {
+      strictNoAuth: true,
+    },
   },
   {
     path: "/admin/login",
